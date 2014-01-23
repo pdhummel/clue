@@ -6,7 +6,7 @@ root=`echo $0 | sed "s/$basename//"`
 cd $root
 . ./clue.env
 
-python ./src/clue/manage.py runserver
+python ./djangoclue/manage.py runserver $IP:$PORT
 
 
 
