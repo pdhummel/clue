@@ -1,0 +1,162 @@
+. ~/workspace/clue/clue.env
+rm ~/workspace/clue/data/clue_sqlite.db
+python ~/workspace/clue/src/clue/manage.py syncdb --noinput
+python ~/workspace/clue/src/clue/manage.py shell
+
+from clue.models import Game, GameBox, Player, GamePlayer
+gb = GameBox()
+gb.create()
+game = Game.objects.create(name='first')
+paul = Player.objects.create(name='paul')
+christy = Player.objects.create(name='christy')
+derek = Player.objects.create(name='derek')
+game.add_player(paul, 'CM')
+game.add_player(christy, 'MS')
+game.add_player(derek, 'PP')
+game.start_game()
+
+
+---------------------------------------------------------------------------------------
+x - deal cards
+x - make board
+    define rooms -- doors
+x - place players on board
+
+
+login and establish session
+
+roll die
+
+API to allow player to move
+    move_player(player, x, y)
+    validate move
+
+API to allow player to make suggestion
+    make_suggestion(player, character, weapon, room)
+    validate suggestion
+        current room, weapon, character
+    find first player with clue
+   
+   
+API to allow player to share clue
+    validate clue (suggested_character, suggested_weapon, suggested_room)
+    share_clue(from_player, to_player, card)
+   
+   
+API to allow player to view clue and record evidence
+   
+
+
+API to allow player to view known evidence   
+   
+           
+API to allow player to make accusation   
+
+
+AI moves
+AI makes suggestion
+AI makes accusation
+AI to show clue, if available       
+AI records evidence
+
+
+http://localhost:8000/clue/
+
+
+---------------------------------------------------------------------------------------
+
+
+WS
+	position of pieces
+	current player turn
+	
+	next action - who, what
+		roll die and move
+		move # spaces
+		use secret passage
+		stay put
+		make suggestion
+		make accusation
+
+		show clue
+		end turn
+	
+	chat
+	look at cards
+	look at evidence
+
+
+
+
+
+---------------------------------------------------------------------------------------
+
+
+login screen
+
+game management screen - 
+	create game
+		invite players
+		start game (once all invited players have joined)
+
+	join game
+
+
+clue board
+
+chat window
+
+
+
+---------------------------------------------------------------------------------------
+
+roll die and move
+make suggestion
+make accusation
+move
+
+
+
+---------------------------------------------------------------------------------------
+Game
+----
+New
+Save
+End
+
+
+
+Player
+------
+Change to AI
+View Cards
+View Notepad
+
+
+Turn
+----
+Roll Die
+Move
+Make Suggestion
+Make Accusation
+End Turn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
