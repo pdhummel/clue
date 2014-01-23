@@ -1,0 +1,127 @@
+<html>
+
+<head>
+<title>Clue</title>
+
+<style media="screen" type="text/css">
+
+</style>
+
+
+<link rel="stylesheet" href="/clue/static/js/jquery-ui-1.10.3/themes/base/jquery-ui.css" />
+<link rel="stylesheet" href="/clue/static/js/jquery-ui-1.10.3/themes/base/jquery.ui.menu.css" />
+<link rel="stylesheet" href="/clue/static/js/jquery-ui-1.10.3/themes/base/jquery.ui.menubar.css" />
+<script type="text/javascript" src="/clue/static/js/jquery-2.0.3.js"></script>
+<script type="text/javascript" src="/clue/static/js/jquery-ui-1.10.3/ui/jquery-ui.js"></script>
+<script type="text/javascript" src="/clue/static/js/jquery-ui-1.10.3/ui/jquery.ui.menu.js"></script>
+<script type="text/javascript" src="/clue/static/js/jquery-ui-1.10.3/ui/jquery.ui.menubar.js"></script>
+
+
+<script language="JavaScript">
+function point_it(event) {
+    var pos_x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("pointer_div").offsetLeft;
+    var pos_y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("pointer_div").offsetTop;
+    //document.getElementById("cross").style.left = (pos_x-1);
+    //document.getElementById("cross").style.top = (pos_y-15);
+    // document.getElementById("cross").style.visibility = "visible";
+    var row_height = (1159 - 50 - 50) / 25;
+    var row = Math.floor(25 - ((1159 - pos_y - 50) / row_height));
+    var col_height = (1162 -75 -72) / 24;
+    var col = Math.floor(24 - ((1162 - pos_x - 75) / col_height));
+    //alert(pos_x + "," + pos_y + "; row=" + row + ", col=" + col);
+}
+
+function place_piece(character, row, col) {
+	var piece = document.getElementById(character);
+	var row_height = (1159 - 50 - 50) / 25;
+	var col_height = (1162 -75 -72) / 24;
+	var pos_y = row * row_height + 50 + 25;
+	var pos_x = col * col_height + 75 + 25;
+	piece.setAttribute("cy", pos_y);
+	piece.setAttribute("cx", pos_x);
+}
+
+function init_page() {
+	// $("#menu").menubar();	
+	place_piece('MS', 0, 16);
+	place_piece('PP', 5, 0);
+    place_piece('CM', 7, 23);
+    place_piece('MP', 18, 0);
+    place_piece('MG', 24, 9);
+    place_piece('MW', 24, 14);    
+}
+</script>
+
+
+
+</head>
+
+
+<body onload="init_page();">
+
+<!--
+<ul id="menu">
+   <li>
+      <a href="#">File</a>
+      <ul>
+         <li><a href="#">New</a></li>
+         <li><a href="#">Open</a></li>
+         <li><a href="#">Close</a></li>
+      </ul>
+   </li>
+   <li>
+      <a href="#">Edit</a>
+      <ul>
+         <li><a href="#">Undo</a></li>
+         <li><a href="#">Redo</a></li>
+      </ul>
+   </li>
+   <li>
+      <a href="#">View</a>
+      <ul>
+         <li><a href="#">Home Screen</a></li>
+         <li>
+            <a href="#">Zoom</a>
+            <ul>
+               <li><a href="#">150%</a></li>
+               <li><a href="#">120%</a></li>
+               <li><a href="#">100%</a></li>
+               <li><a href="#">80%</a></li>
+               <li><a href="#">50%</a></li>
+            </ul>
+         </li>
+      </ul>
+   </li>
+</ul>
+-->
+
+<!-- 
+1162x1159 
+left x border=75, right x border=72
+top y border=50, bottom y border=50
+-->
+
+
+<div id="pointer_div" onclick="point_it(event)" style = "background-image:url('/clue/static/images/clue_board.jpg');width:1162px;height:1159px;">
+	<img src="point.gif" id="cross" style="position:relative;visibility:hidden;z-index:50;" />
+	
+	<svg id="test" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top: 0px;left: 0px;width:1162px;height:1159px;">
+	    <circle id="MS" cx="50" cy="150" r="15" fill="red"/>
+	    <circle id="CM" cx="100" cy="150" r="15" fill="yellow"/>
+	    <circle id="MW" cx="150" cy="150" r="15" fill="white"/>
+	    <circle id="PP" cx="200" cy="150" r="15" fill="purple"/>
+	    <circle id="MG" cx="250" cy="150" r="15" fill="green"/>
+	    <circle id="MP" cx="300" cy="150" r="15" fill="blue"/>
+	</svg>
+</div>
+
+
+
+
+
+
+
+</body>
+
+
+</html>
