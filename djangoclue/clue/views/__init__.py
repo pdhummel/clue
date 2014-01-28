@@ -6,6 +6,7 @@ from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate, login
 from clue.models import Player
 
+
 def index(request):
     return HttpResponse("Hello, world. You're at the index.")
 
@@ -39,30 +40,6 @@ def login_user(request):
     return response
 
 
-
-
-
-
-
-
-
-
-def test_json(request):
-    response_data = {}
-    response_data['result'] = 'hello world'
-    return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-
-
-def add_player_api(request):
-    pass
-
-def start_game_api(request):
-    pass
-
-
-def retrieve_game_state_api(request):
-    pass
 
 
 

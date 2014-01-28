@@ -74,7 +74,7 @@ class GameBox():
         return self.__str__()
 
     def __str__(self):
-        s = 'weapons=' + self.weapons + ', cards=' + self.cards + \
+        s = 'weapons=' + str(self.weapons) + ', cards=' + str(self.cards) + \
             ', board=' + str(self.board)
         return s
 
@@ -233,7 +233,7 @@ class Game(models.Model):
     secret_character = models.CharField(max_length=2, choices=CHARACTER_CHOICES, blank=True)
     secret_weapon = models.CharField(max_length=2, choices=WEAPON_CHOICES, blank=True)
     secret_room = models.CharField(max_length=2, choices=ROOM_CHOICES, blank=True)
-    end_time = models.DateTimeField(blank=True)
+    end_time = models.DateTimeField(blank=True,null=True)
 
     def __init__(self, *args, **kwargs):
         super(Game, self).__init__(*args, **kwargs)
