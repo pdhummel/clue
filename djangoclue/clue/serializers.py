@@ -1,6 +1,6 @@
 from django.forms import widgets
 from rest_framework import serializers
-from clue.models import Player
+from clue.models import Player, Game
 
 
 class PlayerSerializer1(serializers.Serializer):
@@ -35,3 +35,14 @@ class PlayerSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'is_human', 'gender', 'games_played', 'games_won')
 
 
+class GameSerializer(serializers.ModelSerializer):        
+    class Meta:
+        model = Game
+        fields = ('id', 'name', 'game_state', 'current_turn', 'last_die_roll', 'suggested_character', 'suggested_weapon', 'suggested_room')
+
+class GameSecretSerializer(serializers.ModelSerializer):        
+    class Meta:
+        model = Game
+        fields = ('id', 'secret_character', 'secret_weapon', 'secret_room')
+
+        

@@ -1,7 +1,23 @@
+
+linuxmint - http://localhost:8000/clue/
+https://demo-project-c9-pdhummel.c9.io/clue/
+curl https://demo-project-c9-pdhummel.c9.io/players/
+
+---------------------------------------------------------------------------------------
+http://www.django-rest-framework.org/tutorial/1-serialization
+http://stackoverflow.com/questions/17337843/how-to-implement-a-hierarchy-of-resources-eg-parents-id-children-in-django
+
+virtualenv env
+source env/bin/activate
+#deactivate
+
+ ~/.gitignore_global
+ 
+---------------------------------------------------------------------------------------
 . ~/workspace/clue/clue.env
 rm ~/workspace/clue/data/clue_sqlite.db
-python ~/workspace/clue/src/clue/manage.py syncdb --noinput
-python ~/workspace/clue/src/clue/manage.py shell
+python ~/workspace/clue/djangoclue/manage.py syncdb --noinput
+python ~/workspace/clue/djangoclue/manage.py shell
 
 from clue.models import Game, GameBox, Player, GamePlayer
 gb = GameBox()
@@ -14,6 +30,7 @@ game.add_player(paul, 'CM')
 game.add_player(christy, 'MS')
 game.add_player(derek, 'PP')
 game.start_game()
+
 
 
 ---------------------------------------------------------------------------------------
@@ -59,8 +76,6 @@ AI makes accusation
 AI to show clue, if available       
 AI records evidence
 
-
-http://localhost:8000/clue/
 
 
 ---------------------------------------------------------------------------------------
@@ -115,22 +130,113 @@ make suggestion
 make accusation
 move
 
+---------------------------------------------------------------------------------------
+Actors
+    Player
+    Game Organizer extends Player
+
+
+Game Organizer forms game
+Player joins game
+Game Organizer starts game
+Game Organizer ends game
+
+Player rolls die
+Player moves piece
+Player makes an accusation
+Player makes a suggestion
+Player ends turn
+
+Player shares evidence
+
+Player views all known evidence - notebook
+Player views cards
+
+
+browser updates board/game state
 
 
 ---------------------------------------------------------------------------------------
-Game
-----
-New
-Save
-End
+game.roll_die()
+game_piece.move_piece(die_count, row, col, room=None)
+game_piece.place_piece(self, row, col, room)
+game.make_accusation(player, character, weapon, room)
+???
+game.end_turn(player)
+
+???
+game_player.get_my_cards()
 
 
+
+---------------------------------------------------------------------------------------
+
+
+
+clue/games/
+    GET - list of games
+clue/games/<pk>/
+    GET - get game state to display (poll)
+        game state - forming, starting, started, ended
+            forming (input options available = start, join)
+            starting (input options available = N/A)
+            started
+                current player (input options available = turn actions)
+                pending suggestion (input options available = share_evidence)
+            ended (input options available = ?)
+                winner
+                secret cards
+        game piece positions
+    DELETE - end game
+    POST - new game
+
+
+clue/games/<game pk>/players/
+    GET - list of players
+    POST - join game
+    
+clue/games/<game pk>/players/<player pk>/
+    GET - 
+        input options available (based on game state)
+        player cards
+        
+    PUT - action
+        action=start
+        
+        action=roll
+        action=move
+        action=make_suggestion
+        action=make_accusation
+        action=end_turn
+        
+        action=share_evidence                
+
+
+clue/games/<game pk>/pieces/
+    GET - list of names and positions
+clue/games/<game pk>/pieces/<piece pk>/
+    GET - name and position
+
+
+
+---------------------------------------------------------------------------------------
+Game screen
+    List of games
+        Game row - view details, join, start
+    New game
+        
+Game board    
+    poll game state
+    if game state changes
+        get player input options
+        update menu
+
+---------------------------------------------------------------------------------------
 
 Player
 ------
-Change to AI
 View Cards
-View Notepad
+View Evidence Notepad
 
 
 Turn
@@ -140,11 +246,6 @@ Move
 Make Suggestion
 Make Accusation
 End Turn
-
-
-
-
-
 
 
 

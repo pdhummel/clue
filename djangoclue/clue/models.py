@@ -228,16 +228,21 @@ class Player(models.Model):
 
 class Game(models.Model):
     name = models.CharField(max_length=50)
+    game_state = models.CharField(max_length=50, default='forming')
     current_turn = models.IntegerField(default=0)
     start_time = models.DateTimeField(auto_now_add=True)    
     secret_character = models.CharField(max_length=2, choices=CHARACTER_CHOICES, blank=True)
     secret_weapon = models.CharField(max_length=2, choices=WEAPON_CHOICES, blank=True)
     secret_room = models.CharField(max_length=2, choices=ROOM_CHOICES, blank=True)
+    suggested_character = models.CharField(max_length=2, choices=CHARACTER_CHOICES, blank=True)
+    suggested_weapon = models.CharField(max_length=2, choices=WEAPON_CHOICES, blank=True)
+    suggested_room = models.CharField(max_length=2, choices=ROOM_CHOICES, blank=True)    
     end_time = models.DateTimeField(blank=True,null=True)
+    last_die_roll = models.IntegerField(default=0)
 
     def __init__(self, *args, **kwargs):
         super(Game, self).__init__(*args, **kwargs)
-        self.players = []
+        self.players = []   # game_player
         self.pieces = {}
       
     def add_player(self, player, character):
@@ -247,7 +252,36 @@ class Game(models.Model):
         gp = GamePlayer.objects.create(game=self, player=player, piece=piece)
         self.players.append(gp)
         
-
+    def roll_die(self):
+        import random
+        die = [1,2,3,4,5,6]
+        random.shuffle(die)
+        self.last_die_roll = die[0]
+        self.save()
+        return die[0]
+    
+    def make_accusation(self, player, character, weapon, room):
+        got_it_right = False
+        if character == self.secret_character and \
+           weapon == self.secret_weapon and \
+           room == self.secret_room:
+               got_it_right = True
+        if got_it_right:
+            # TODO:  player won game and game over
+            pass
+        else:
+            # TODO:  player lost game and is out of the game
+            pass
+        return got_it_right
+    
+    def end_turn(self, player):
+        # TODO:  update current_turn
+        pass
+    
+    def gather_evidence(self, character, weapon, room):
+        # TODO:  get evidence from all players sorted by turn.  The evidence for 
+        # the player to the left of the current player should be first.
+        pass
     
     def _place_pieces(self):
         self.game_box = GameBox()
@@ -340,7 +374,7 @@ class GamePiece(models.Model):
         elif row and col and room == None:
             #TODO:  validate die roll and movement
             is_ok = True
-            if row != self.y or col != self.x:
+            if self.space and (row != self.space.y or col != self.space.x):
                 new_space = Space.objects.get(x=col, y=row)
                 try:
                     GamePiece.objects.get(space=new_space)
@@ -382,6 +416,23 @@ class GamePlayer(models.Model):
     player = models.ForeignKey(Player)
     piece = models.ForeignKey(GamePiece, blank=True)
     turn_order = models.IntegerField(default=0)
+    is_game_organizer = models.BooleanField(default=False)    
+
+    def get_my_cards(self):
+        my_cards = []
+        for card in PlayerCard.objects.filter(player=self):
+            my_cards.append(card)
+        return my_cards
+        
+    def gather_evidence(self, character, weapon, room):
+        evidence = []
+        for card in PlayerCard.objects.filter(player=self):
+            # card.description (CARD_CHOICES), card.type (CARD_TYPE_CHOICES)
+            if card.description == character or \
+               card.description == weapon or \
+               card.description == room:
+                evidence.append(card)
+        return evidence
 
     def __repr__(self):
         return self.__str__()
