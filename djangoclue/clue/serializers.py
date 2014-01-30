@@ -35,17 +35,26 @@ class PlayerSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'is_human', 'gender', 'games_played', 'games_won')
 
 
+class GameListSerializer(serializers.ModelSerializer):        
+    class Meta:
+        model = Game
+        fields = ('id', 'name', 'game_state', 'start_time', 'end_time')
+
 class GameSerializer(serializers.ModelSerializer):
     game_pieces = serializers.SerializerMethodField('get_game_pieces')
 
     def get_game_pieces(self, obj):
-        return reverse('game_piece_list', 
-               args=[obj.pk], request=self.context['request'])
+        game_pieces = []
+        for gp in GamePiece.objects.filter(game__id=obj.pk):
+            game_piece = GamePieceSerializer(gp).data  
+            game_pieces.append(game_piece)
+        return game_pieces
                
     class Meta:
         model = Game
         fields = ('id', 'name', 'game_state', 'current_turn', 'last_die_roll', 
-                  'suggested_character', 'suggested_weapon', 'suggested_room')
+                  'suggested_character', 'suggested_weapon', 'suggested_room', 
+                  'game_pieces')
 
 class GameSecretSerializer(serializers.ModelSerializer):        
     class Meta:

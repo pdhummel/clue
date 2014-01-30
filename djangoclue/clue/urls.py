@@ -41,8 +41,7 @@ urlpatterns = patterns('',
     url(r'^clue/games/secret/(?P<pk>[0-9]+)/$', GameSecretDetail.as_view()),
     
     url(r'^clue/games/(?P<game_pk>.+)/pieces/$', GamePieceList.as_view(), name='game_pieces_list'),    
-    #url(r'^clue/games/(?P<pk>[0-9]+)/pieces/$', GameSecretDetail.as_view()),
-    #url(r'^clue/games/(?P<pk>[0-9]+)/pieces/(?P<pk>[0-9]+)$', GameSecretDetail.as_view()),
+    url(r'^clue/games/(?P<game_pk>[0-9]+)/pieces/(?P<pk>[0-9]+)/$', GamePieceDetail.as_view()),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)
