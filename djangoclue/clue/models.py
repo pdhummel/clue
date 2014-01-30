@@ -324,6 +324,7 @@ class Game(models.Model):
         self.secret_character = characters[0][0]
         rooms = list(ROOM_CHOICES)
         self.secret_room = rooms[0][0]
+        self.save()
         
         # Get the remaining cards in the deck and shuffle them
         cards = []

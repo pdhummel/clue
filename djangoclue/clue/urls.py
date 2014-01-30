@@ -4,6 +4,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from views.player_api_view import PlayerList, PlayerDetail
 from views.game_api_view import GameList, GameDetail, GameSecretDetail
+from views.game_piece_api_view import GamePieceList, GamePieceDetail
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -37,7 +38,11 @@ urlpatterns = patterns('',
     
     url(r'^clue/games/$', GameList.as_view()),
     url(r'^clue/games/(?P<pk>[0-9]+)/$', GameDetail.as_view()),
-    #url(r'^clue/games/(?P<pk>[0-9]+)/$', GameSecretDetail.as_view()),
+    url(r'^clue/games/secret/(?P<pk>[0-9]+)/$', GameSecretDetail.as_view()),
+    
+    url(r'^clue/games/(?P<game_pk>.+)/pieces/$', GamePieceList.as_view(), name='game_pieces_list'),    
+    #url(r'^clue/games/(?P<pk>[0-9]+)/pieces/$', GameSecretDetail.as_view()),
+    #url(r'^clue/games/(?P<pk>[0-9]+)/pieces/(?P<pk>[0-9]+)$', GameSecretDetail.as_view()),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)

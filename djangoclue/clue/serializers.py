@@ -1,6 +1,6 @@
 from django.forms import widgets
 from rest_framework import serializers
-from clue.models import Player, Game
+from clue.models import Player, Game, GamePiece, Space
 
 
 class PlayerSerializer1(serializers.Serializer):
@@ -35,14 +35,33 @@ class PlayerSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'is_human', 'gender', 'games_played', 'games_won')
 
 
-class GameSerializer(serializers.ModelSerializer):        
+class GameSerializer(serializers.ModelSerializer):
+    game_pieces = serializers.SerializerMethodField('get_game_pieces')
+
+    def get_game_pieces(self, obj):
+        return reverse('game_piece_list', 
+               args=[obj.pk], request=self.context['request'])
+               
     class Meta:
         model = Game
-        fields = ('id', 'name', 'game_state', 'current_turn', 'last_die_roll', 'suggested_character', 'suggested_weapon', 'suggested_room')
+        fields = ('id', 'name', 'game_state', 'current_turn', 'last_die_roll', 
+                  'suggested_character', 'suggested_weapon', 'suggested_room')
 
 class GameSecretSerializer(serializers.ModelSerializer):        
     class Meta:
         model = Game
         fields = ('id', 'secret_character', 'secret_weapon', 'secret_room')
 
+class SpaceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Space
+        fields = ('id', 'x', 'y', 'room', 'is_blocked', 'door_direction', 'door_to_room')
+
+
+class GamePieceSerializer(serializers.ModelSerializer):
+    space = SpaceSerializer(source='space')    
+    
+    class Meta:
+        model = GamePiece
+        fields = ('id', 'character', 'space', 'room')
         
