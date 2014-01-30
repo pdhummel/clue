@@ -177,16 +177,15 @@ clue/games/
     GET - list of games
 clue/games/<pk>/
     GET - get game state to display (poll)
-        game state - forming, starting, started, ended
+        game state - forming, starting, in_progress, ended
             forming (input options available = start, join)
             starting (input options available = N/A)
-            started
+            in progress
                 current player (input options available = turn actions)
-                pending suggestion (input options available = share_evidence)
+                pending suggestion feedback (input options available = share_evidence)
             ended (input options available = ?)
                 winner
                 secret cards
-        game piece positions
     DELETE - end game
     POST - new game
 

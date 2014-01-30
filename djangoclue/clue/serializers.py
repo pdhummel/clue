@@ -60,6 +60,8 @@ class GamePlayerSerializer(serializers.ModelSerializer):
     piece = GamePieceSerializer(source='piece')
     
     cards = serializers.SerializerMethodField('get_player_cards')
+    actions_allowed = serializers.SerializerMethodField('get_allowed_actions')
+    
     def get_player_cards(self, obj):
         cards = []
         for pc in PlayerCard.objects.filter(player__id=obj.pk):
@@ -67,11 +69,14 @@ class GamePlayerSerializer(serializers.ModelSerializer):
             cards.append(card)
         return cards
     
+    def get_allowed_actions(self, obj):
+        actions = obj.get_actions_allowed()
+        return actions    
     
     class Meta:
         model = GamePlayer
         fields = ('id', 'player', 'piece', 'turn_order', 'is_game_organizer', 
-                  'cards')
+                  'cards', 'actions_allowed')
 
 class GamePlayerListSerializer(serializers.ModelSerializer):
     player = PlayerSerializer(source='player')

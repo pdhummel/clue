@@ -54,6 +54,18 @@ DIRECTION_CHOICES = (
 
 
 
+# forming, starting, in_progress, ended
+GAME_STATE_ACTIONS = {
+    "forming": {"organizer": ["start_game"], "all": ["join_game"]},
+    "starting": {},
+    "in_progress": {
+        "current_player": ["roll_die", "move", "make_suggestion", "make_accusation", "end_turn"],
+        "organizer": ["end_game"],
+        "all": ["view_cards", "view_notepad"]
+    },
+    "ended": {}
+}
+
 class GameBox():
     def __init__(self):
         self.weapons = list(WEAPON_CHOICES)
@@ -229,7 +241,8 @@ class Player(models.Model):
 class Game(models.Model):
     name = models.CharField(max_length=50)
     game_state = models.CharField(max_length=50, default='forming')
-    current_turn = models.IntegerField(default=0)
+    current_turn = models.IntegerField(default=0)           # turns start with 1
+    pending_evidence_player_turn = models.IntegerField(default=0)
     start_time = models.DateTimeField(auto_now_add=True)    
     secret_character = models.CharField(max_length=2, choices=CHARACTER_CHOICES, blank=True)
     secret_weapon = models.CharField(max_length=2, choices=WEAPON_CHOICES, blank=True)
@@ -274,9 +287,13 @@ class Game(models.Model):
             pass
         return got_it_right
     
+    # turns start with 1
     def end_turn(self, player):
-        # TODO:  update current_turn
-        pass
+        next_turn = self.current_turn + 1
+        if next_turn > len(self.players):
+            next_turn = 1
+        self.current_turn = next_turn
+        self.save()
     
     def gather_evidence(self, character, weapon, room):
         # TODO:  get evidence from all players sorted by turn.  The evidence for 
@@ -304,10 +321,12 @@ class Game(models.Model):
         # TODO:  validate that we have enough players
         self._set_turn_order()
         self._deal_cards()
+        self.current_turn = 1
+        self.save()
         
             
     def _set_turn_order(self):
-        turn_order = 0
+        turn_order = 1
         for player in self.players:
             player.turn_order = turn_order
             player.save()
@@ -424,6 +443,33 @@ class GamePlayer(models.Model):
         for card in PlayerCard.objects.filter(player=self):
             my_cards.append(card)
         return my_cards
+
+
+    def is_current_player(self):
+        if self.turn_order == self.game.current_turn:
+            return True
+        else:
+            return False
+    
+    # TODO:  figure out share_evidence
+    def get_actions_allowed(self):
+        actions = []
+        if self.game.game_state in GAME_STATE_ACTIONS:
+            role_action_dict = GAME_STATE_ACTIONS[self.game.game_state]
+            if "all" in role_action_dict:
+                for action in role_action_dict["all"]:
+                    actions.append(action)
+            if self.is_game_organizer and "organizer" in role_action_dict:
+                for action in role_action_dict["organizer"]:
+                    actions.append(action)
+            if self.is_current_player() and "current_player" in role_action_dict:
+                for action in role_action_dict["current_player"]:
+                    actions.append(action)
+            if self.game.suggested_room and self.game.suggested_character and \
+               self.game.suggested_weapon and \
+               self.game.pending_evidence_player_turn == self.turn_order:
+                actions.append("share_evidence")
+        return actions
         
     def gather_evidence(self, character, weapon, room):
         evidence = []
@@ -447,7 +493,7 @@ class GamePlayer(models.Model):
 class PlayerCard(models.Model):
     player = models.ForeignKey(GamePlayer)
     card = models.ForeignKey(Card)
-    
+
     def __repr__(self):
         return self.__str__()
 
