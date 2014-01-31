@@ -11,7 +11,11 @@ class PlayerSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'is_human', 'gender', 'games_played', 'games_won')
 
 
-class GameListSerializer(serializers.ModelSerializer):        
+class GameListSerializer(serializers.ModelSerializer):
+    def validate_game_state(self, attrs, source):
+        "Set a default game_state."
+        attrs[source] = "forming"
+        return attrs    
     class Meta:
         model = Game
         fields = ('id', 'name', 'game_state', 'start_time', 'end_time')

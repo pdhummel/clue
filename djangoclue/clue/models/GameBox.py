@@ -15,8 +15,8 @@ class GameBox():
         for card in Card.objects.filter():
             self.cards[card.description] = card
         self.board = [[0 for x in xrange(24)] for x in xrange(25)]
-        for space in Space.objects.filter():
-            self.board[space.x][space.y] = space
+        for space in Space.objects.filter().order_by('y', 'x'):
+            self.board[space.y][space.x] = space
 
     def __repr__(self):
         return self.__str__()

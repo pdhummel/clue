@@ -5,7 +5,7 @@ from GameBox import GameBox
 
 class Game(models.Model):
     name = models.CharField(max_length=50)
-    game_state = models.CharField(max_length=50, default='forming')
+    game_state = models.CharField(max_length=50, default='forming', null=True)
     current_turn = models.IntegerField(default=0)           # turns start with 1
     pending_evidence_player_turn = models.IntegerField(default=0)
     start_time = models.DateTimeField(auto_now_add=True)    
@@ -69,7 +69,7 @@ class Game(models.Model):
     def _place_pieces(self):
         from GamePiece import GamePiece
         self.game_box = GameBox()
-        self.game_box.open()           
+        self.game_box.open()
         gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[0][0], space=self.game_box.board[0][1])
         self.pieces[gp.character] = gp
         gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[1][0], space=self.game_box.board[0][2])

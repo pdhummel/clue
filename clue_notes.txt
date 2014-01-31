@@ -175,6 +175,8 @@ game_player.get_my_cards()
 
 clue/games/
     GET - list of games
+    POST - new game
+    
 clue/games/<pk>/
     GET - get game state to display (poll)
         game state - forming, starting, in_progress, ended
@@ -187,7 +189,7 @@ clue/games/<pk>/
                 winner
                 secret cards
     DELETE - end game
-    POST - new game
+
 
 
 clue/games/<game pk>/players/
@@ -247,14 +249,73 @@ Make Accusation
 End Turn
 
 
+---------------------------------------------------------------------------------------
+TODO:
+
+
+X - Refactor models into separate files
+
+
+X - POST clue/games/ - new game
+
+POST clue/games/<game pk>/players/ - new player to join game
+    {"name": "Paul", "piece": "PP"}
+
+PUT clue/games/<game pk>/ - start game
+DELETE clue/games/<game pk>/ - end game
+PUT clue/games/<game pk>/players/<player pk>/ - execute actions
+UI
+    static menu
+    poll and refresh
+    execute actions
+        roll die
+        move
+        end turn
+        make suggestion (pop-up)
+        make accusation (pop-up)
+        view cards (pop-up)
+    dynamic menu
+    evidence notepad
+    game screen
+
+---------------------------------------------------------------------------------------
 
 
 
+0 24 x=0,y=24, blocked=True, room=, door=
 
 
+self.board = [[0 for x in xrange(24)] for x in xrange(25)]
+
+spaces = [[0 for x in xrange(24)] for x in xrange(25)] 
+
+0 0 x=0,y=0, blocked=False, room=St, door=
+1 0 x=1,y=0, blocked=False, room=St, door=
+2 0 x=2,y=0, blocked=False, room=St, door=
+3 0 x=3,y=0, blocked=False, room=St, door=
+4 0 x=4,y=0, blocked=False, room=St, door=
+5 0 x=5,y=0, blocked=False, room=St, door=
+6 0 x=6,y=0, blocked=False, room=St, door=
+. . .
+20 23 x=20,y=23, blocked=False, room=Ki, door=
+21 23 x=21,y=23, blocked=False, room=Ki, door=
+22 23 x=22,y=23, blocked=False, room=Ki, door=
+23 23 x=23,y=23, blocked=False, room=Ki, door=
+0 24 x=0,y=24, blocked=True, room=, door=
 
 
-
+0 1 x=0,y=1, blocked=False, room=St, door=
+1 1 x=1,y=1, blocked=False, room=St, door=
+2 1 x=2,y=1, blocked=False, room=St, door=
+3 1 x=3,y=1, blocked=False, room=St, door=
+4 1 x=4,y=1, blocked=False, room=St, door=
+5 1 x=5,y=1, blocked=False, room=St, door=
+6 1 x=6,y=1, blocked=False, room=St, door=
+...
+20 24 x=20,y=24, blocked=True, room=, door=
+21 24 x=21,y=24, blocked=True, room=, door=
+22 24 x=22,y=24, blocked=True, room=, door=
+23 24 x=23,y=24, blocked=True, room=, door=
 
 
 

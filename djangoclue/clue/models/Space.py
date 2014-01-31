@@ -69,7 +69,11 @@ class Space(models.Model):
         for row in rows:
             col_num = 0
             for char in row:
-                space = Space.objects.create(x=row_num,y=col_num)
+                #space = Space.objects.create(x=col_num,y=row_num)
+                space = Space()
+                space.y = row_num
+                space.x = col_num
+
                 if char in '123456789':
                     space.room = room_map[char][0]
                 elif char in 'UDLR':

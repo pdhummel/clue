@@ -1,10 +1,17 @@
-from clue.models import GamePlayer
-from clue.serializers import GamePlayerSerializer, GamePlayerListSerializer
+import json
+
+from django.http import HttpResponse
+from django.template import RequestContext
+from django.shortcuts import render_to_response
 from django.http import Http404
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
+
+from clue.models import Player, GamePlayer, Game
+from clue.serializers import GamePlayerSerializer, GamePlayerListSerializer
 
 
 class GamePlayerList(generics.ListCreateAPIView):
@@ -17,6 +24,27 @@ class GamePlayerList(generics.ListCreateAPIView):
 
     def pre_save(self, obj):
         obj.game_id = self.kwargs['game_pk'] 
+        
+    def post(self, request, *args, **kwargs):
+        # from https://github.com/tomchristie/django-rest-framework/blob/master/rest_framework/mixins.py
+        data = request.DATA
+        response_data = {}
+        response_status = status.HTTP_400_BAD_REQUEST
+        try:
+            name = data['name']
+            piece = data['piece']
+            player, created = Player.objects.get_or_create(name=name)
+            response_data['name'] = name
+            response_data['player_id'] = player.id
+            game_id = int(kwargs['game_pk'])
+            game = Game.objects.get(id=game_id)
+            game.add_player(player, piece)
+            response_status = status.HTTP_201_CREATED
+        except Exception, e:
+            response_data['error'] = str(e)
+        return HttpResponse(json.dumps(response_data), status=response_status, 
+                            mimetype="application/json")
+
 
         
 class GamePlayerDetail(generics.RetrieveUpdateDestroyAPIView):
