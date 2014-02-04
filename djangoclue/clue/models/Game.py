@@ -24,14 +24,30 @@ class Game(models.Model):
         self.pieces = {}
       
     def add_player(self, player, character):
+        self._open_game()        
+        # TODO:  validate the game state
         from GamePlayer import GamePlayer
         if character not in self.pieces.keys():
             self._place_pieces()
         piece = self.pieces[character]           
         gp = GamePlayer.objects.create(game=self, player=player, piece=piece)
         self.players.append(gp)
+
+    def start_game(self):
+        self._open_game()        
+        # TODO:  validate that we have enough players
+        # TODO:  validate the game state
+        self.game_state = "starting"
+        self.save()
+        self._set_turn_order()
+        self._deal_cards()
+        self.current_turn = 1
+        self.game_state = "in_progress"
+        self.save()
+        
         
     def roll_die(self):
+        # TODO:  validate the game state and whether the die has already been rolled
         import random
         die = [1,2,3,4,5,6]
         random.shuffle(die)
@@ -55,6 +71,7 @@ class Game(models.Model):
     
     # turns start with 1
     def end_turn(self, player):
+        # TODO:  validate the player
         next_turn = self.current_turn + 1
         if next_turn > len(self.players):
             next_turn = 1
@@ -66,10 +83,28 @@ class Game(models.Model):
         # the player to the left of the current player should be first.
         pass
     
+    
+    def _open_game(self):
+        from GamePiece import GamePiece
+        from GamePlayer import GamePlayer
+        if len(self.pieces) == 0:
+            for gp in GamePiece.objects.filter(game=self):
+                self.pieces[gp.character] = gp
+        if len(self.players) == 0:
+            for gp in GamePlayer.objects.filter(game=self):
+                self.players.append(gp)
+        
+    
+    def _open_game_box(self):
+        if (not hasattr(self, 'game_box')) or (not self.game_box):
+            self.game_box = GameBox()
+            self.game_box.open()
+            if len(self.game_box.cards) == 0:
+                self.game_box.create()
+    
     def _place_pieces(self):
         from GamePiece import GamePiece
-        self.game_box = GameBox()
-        self.game_box.open()
+        self._open_game_box()
         gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[0][0], space=self.game_box.board[0][1])
         self.pieces[gp.character] = gp
         gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[1][0], space=self.game_box.board[0][2])
@@ -84,12 +119,6 @@ class Game(models.Model):
         self.pieces[gp.character] = gp
 
 
-    def start_game(self):
-        # TODO:  validate that we have enough players
-        self._set_turn_order()
-        self._deal_cards()
-        self.current_turn = 1
-        self.save()
         
             
     def _set_turn_order(self):
@@ -101,6 +130,7 @@ class Game(models.Model):
         
     
     def _deal_cards(self):
+        self._open_game_box()
         # Pick the killer, weapon, and room
         weapons = list(WEAPON_CHOICES)
         random.shuffle(weapons)
