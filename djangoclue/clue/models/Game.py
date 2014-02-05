@@ -82,6 +82,7 @@ class Game(models.Model):
         if next_turn > len(self.players):
             next_turn = 1
         self.current_turn = next_turn
+        self.last_die_roll = 0
         self.save()
     
     def gather_evidence(self, character, weapon, room):

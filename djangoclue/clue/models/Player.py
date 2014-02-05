@@ -6,6 +6,8 @@ class Player(models.Model):
     gender = models.CharField(max_length=6, blank=True)
     games_played = models.IntegerField(default=0)
     games_won = models.IntegerField(default=0)
+    token = models.CharField(max_length=50, blank=True)
+    password = models.CharField(max_length=50, blank=True)
 
     def __repr__(self):
         return self.__str__()
