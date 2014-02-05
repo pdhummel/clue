@@ -47,8 +47,8 @@ DIRECTION_CHOICES = (
 
 # forming, starting, in_progress, ended
 GAME_STATE_ACTIONS = {
-    "forming": {"organizer": ["start_game"], "all": ["join_game"]},
-    "starting": {},
+    "forming": {"organizer": ["start_game"], "all": ["join_game", "enter"]},
+    "starting": {"all": ["enter"]},
     "in_progress": {
         "current_player": ["roll_die", "move", "make_suggestion", "make_accusation", "end_turn"],
         "organizer": ["end_game"],

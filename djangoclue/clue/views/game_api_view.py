@@ -26,6 +26,8 @@ class GameDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     
+        
+    
     # start the game
     def put(self, request, *args, **kwargs):
         data = request.DATA

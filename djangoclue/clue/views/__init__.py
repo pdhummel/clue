@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate, login
-from clue.models import Player
+from clue.models import Player, Game, GamePlayer
 
 
 def index(request):
@@ -48,7 +48,7 @@ def login_user(request):
                 uuid._uuid_generate_random = None
                 player.token = uuid.uuid4()
                 player.save()
-                
+            # TODO:  goto the game screen instead    
             page = 'board.html'
     except:
         state = "Your username and/or password were incorrect."
@@ -61,6 +61,35 @@ def login_user(request):
 
 
 
-
+def game_list(request):
+    player = None
+    try:
+        if request.COOKIES.has_key( 'clue_token' ):
+            value = request.COOKIES[ 'clue_token' ]
+            player = Player.objects.get(token=value)
+    except:
+        pass
+    
+    games = []
+    for game in Game.objects.filter():
+        game.owner = ""        
+        game.players = []
+        game.actions = ["enter"]
+        for game_player in GamePlayer.objects.filter(game=game):
+            if game_player.is_game_organizer:
+                game.owner = game_player.player.name
+            game.players.append(game_player.player.name)
+            
+            # abort | start | join | enter
+            if game.game_state == "forming":
+                if game_player.player == player:
+                    game.actions.append("start")
+                    game.actions.append("abort")
+                elif player != None:
+                    game.actions.append("join")
+        games.append(game)            
+    
+    response = render_to_response('game_list.html', {'player': player, 'games': games})
+    return response
 
 

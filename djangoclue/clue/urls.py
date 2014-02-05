@@ -36,6 +36,7 @@ urlpatterns = patterns('',
     #url(r'^index$', 'clue.views.index', name='index'),
     url(r'^clue/$', 'clue.views.clue', name='clue'),
     url(r'^clue/login/$', 'clue.views.login_user'),  
+    url(r'^clue/game_list/$', 'clue.views.game_list'),      
     
     url(r'^clue/games/$', GameList.as_view()),
     url(r'^clue/games/(?P<pk>[0-9]+)/$', GameDetail.as_view()),
