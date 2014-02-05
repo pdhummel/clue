@@ -20,12 +20,13 @@ class Game(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(Game, self).__init__(*args, **kwargs)
-        self.players = []   # game_player
-        self.pieces = {}
+        self.players = []   # GamePlayer
+        self.pieces = {}    # GamePiece
       
     def add_player(self, player, character):
         self._open_game()        
         # TODO:  validate the game state
+        # TODO:  validate that the piece is not already taken
         from GamePlayer import GamePlayer
         if character not in self.pieces.keys():
             self._place_pieces()
@@ -45,6 +46,11 @@ class Game(models.Model):
         self.game_state = "in_progress"
         self.save()
         
+    
+    def end_game(self):
+        # TODO:  validate the game state
+        self.game_state = "ended"
+        self.save()
         
     def roll_die(self):
         # TODO:  validate the game state and whether the die has already been rolled

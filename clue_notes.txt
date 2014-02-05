@@ -14,6 +14,7 @@ source env/bin/activate
  ~/.gitignore_global
  
 ---------------------------------------------------------------------------------------
+source env/bin/activate
 . ~/workspace/clue/clue.env
 rm ~/workspace/clue/data/clue_sqlite.db
 python ~/workspace/clue/djangoclue/manage.py syncdb --noinput
@@ -253,6 +254,7 @@ End Turn
 TODO:
 
 
+
 X - Refactor models into separate files
 
 
@@ -260,10 +262,17 @@ X - POST clue/games/ - new game
 
 POST clue/games/<game pk>/players/ - new player to join game
     {"name": "Paul", "piece": "PP"}
+    TODO:  validations for new player
+    TODO:  additional fields for new player
 
 PUT clue/games/<game pk>/ - start game
+    { "action": "start_game" }
+    TODO:  don't start a game already started
+
 DELETE clue/games/<game pk>/ - end game
+
 PUT clue/games/<game pk>/players/<player pk>/ - execute actions
+
 UI
     static menu
     poll and refresh
@@ -278,46 +287,27 @@ UI
     evidence notepad
     game screen
 
+
+
 ---------------------------------------------------------------------------------------
+source env/bin/activate
+. ~/workspace/clue/clue.env
+rm ~/workspace/clue/data/clue_sqlite.db
+python ~/workspace/clue/djangoclue/manage.py syncdb --noinput
 
 
+curl -X POST --header "Content-type: application/json" -d '{ "name": "first" }' https://demo-project-c9-pdhummel.c9.io/clue/games/
+curl -X POST --header "Content-type: application/json" -d '{"name": "Paul", "piece": "PP"}' https://demo-project-c9-pdhummel.c9.io/clue/games/1/players/
+curl -X POST --header "Content-type: application/json" -d '{"name": "Christy", "piece": "MS"}' https://demo-project-c9-pdhummel.c9.io/clue/games/1/players/
+curl -X POST --header "Content-type: application/json" -d '{"name": "Derek", "piece": "CM"}' https://demo-project-c9-pdhummel.c9.io/clue/games/1/players/
+curl -X PUT --header "Content-type: application/json" -d '{ "action": "start_game" }' https://demo-project-c9-pdhummel.c9.io/clue/games/1/
+curl -X DELETE --header "Content-type: application/json" https://demo-project-c9-pdhummel.c9.io/clue/games/1/
 
-0 24 x=0,y=24, blocked=True, room=, door=
-
-
-self.board = [[0 for x in xrange(24)] for x in xrange(25)]
-
-spaces = [[0 for x in xrange(24)] for x in xrange(25)] 
-
-0 0 x=0,y=0, blocked=False, room=St, door=
-1 0 x=1,y=0, blocked=False, room=St, door=
-2 0 x=2,y=0, blocked=False, room=St, door=
-3 0 x=3,y=0, blocked=False, room=St, door=
-4 0 x=4,y=0, blocked=False, room=St, door=
-5 0 x=5,y=0, blocked=False, room=St, door=
-6 0 x=6,y=0, blocked=False, room=St, door=
-. . .
-20 23 x=20,y=23, blocked=False, room=Ki, door=
-21 23 x=21,y=23, blocked=False, room=Ki, door=
-22 23 x=22,y=23, blocked=False, room=Ki, door=
-23 23 x=23,y=23, blocked=False, room=Ki, door=
-0 24 x=0,y=24, blocked=True, room=, door=
-
-
-0 1 x=0,y=1, blocked=False, room=St, door=
-1 1 x=1,y=1, blocked=False, room=St, door=
-2 1 x=2,y=1, blocked=False, room=St, door=
-3 1 x=3,y=1, blocked=False, room=St, door=
-4 1 x=4,y=1, blocked=False, room=St, door=
-5 1 x=5,y=1, blocked=False, room=St, door=
-6 1 x=6,y=1, blocked=False, room=St, door=
-...
-20 24 x=20,y=24, blocked=True, room=, door=
-21 24 x=21,y=24, blocked=True, room=, door=
-22 24 x=22,y=24, blocked=True, room=, door=
-23 24 x=23,y=24, blocked=True, room=, door=
-
-
-
+curl -X POST --header "Content-type: application/json" -d '{ "name": "second" }' https://demo-project-c9-pdhummel.c9.io/clue/games/
+curl -X POST --header "Content-type: application/json" -d '{"name": "Paul", "piece": "PP"}' https://demo-project-c9-pdhummel.c9.io/clue/games/2/players/
+curl -X POST --header "Content-type: application/json" -d '{"name": "Christy", "piece": "MS"}' https://demo-project-c9-pdhummel.c9.io/clue/games/2/players/
+curl -X POST --header "Content-type: application/json" -d '{"name": "Derek", "piece": "CM"}' https://demo-project-c9-pdhummel.c9.io/clue/games/2/players/
+curl -X PUT --header "Content-type: application/json" -d '{ "action": "start_game" }' https://demo-project-c9-pdhummel.c9.io/clue/games/2/
+curl -X DELETE --header "Content-type: application/json" https://demo-project-c9-pdhummel.c9.io/clue/games/2/
 
 

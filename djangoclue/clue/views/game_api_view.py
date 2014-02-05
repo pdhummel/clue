@@ -18,17 +18,21 @@ class GameList(generics.ListCreateAPIView):
     queryset = Game.objects.all()
     serializer_class = GameListSerializer
 
+class GameSecretDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Game.objects.all()
+    serializer_class = GameSecretSerializer
 
 class GameDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     
+    # start the game
     def put(self, request, *args, **kwargs):
         data = request.DATA
         response_data = {}
         response_status = status.HTTP_400_BAD_REQUEST
         try:
-            # data = {u'action': u'start'}
+            # data = {u'action': u'start_game'}
             # kwargs = {'pk': u'1'}
             game_id = int(kwargs['pk'])
             game = Game.objects.get(id=game_id)
@@ -38,9 +42,23 @@ class GameDetail(generics.RetrieveUpdateDestroyAPIView):
             response_data['error'] = str(e)
         return HttpResponse(json.dumps(response_data), status=response_status, 
                             mimetype="application/json")    
-    
-    
 
-class GameSecretDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Game.objects.all()
-    serializer_class = GameSecretSerializer
+    # end the game
+    def delete(self, request, *args, **kwargs):
+        data = request.DATA
+        response_data = {}
+        response_status = status.HTTP_400_BAD_REQUEST
+        try:
+            # kwargs = {'pk': u'1'}
+            game_id = int(kwargs['pk'])
+            game = Game.objects.get(id=game_id)
+            game.end_game()
+            response_status = status.HTTP_200_OK
+        except Exception, e:
+            response_data['error'] = str(e)
+        return HttpResponse(json.dumps(response_data), status=response_status, 
+                            mimetype="application/json")
+
+
+
+
