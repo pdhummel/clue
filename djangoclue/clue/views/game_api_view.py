@@ -17,6 +17,23 @@ from clue.serializers import GameSerializer, GameListSerializer, GameSecretSeria
 class GameList(generics.ListCreateAPIView):
     queryset = Game.objects.all()
     serializer_class = GameListSerializer
+    
+    # create the game
+    #def post(self, request, *args, **kwargs):
+    #    data = request.DATA
+    #    response_data = {}
+    #    response_status = status.HTTP_400_BAD_REQUEST
+    #    try:
+    #        # data = {"name": "first", "player_name": "Paul", "piece": "PP" }
+
+    #        response_status = status.HTTP_200_OK
+    #    except Exception, e:
+    #        response_data['error'] = str(e)
+    #    return HttpResponse(json.dumps(response_data), status=response_status, 
+    #                        mimetype="application/json")    
+        
+    
+    
 
 class GameSecretDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Game.objects.all()
@@ -25,8 +42,6 @@ class GameSecretDetail(generics.RetrieveUpdateDestroyAPIView):
 class GameDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
-    
-        
     
     # start the game
     def put(self, request, *args, **kwargs):

@@ -33,12 +33,17 @@ class GamePlayerList(generics.ListCreateAPIView):
         try:
             name = data['name']
             piece = data['piece']
+            is_owner = False
+            if 'is_owner' in data and \
+                data[is_owner] in ['Y', 'y', 'Yes', 'yes', 'True', 'true']:
+                is_owner = True
+                
             player, created = Player.objects.get_or_create(name=name)
             response_data['name'] = name
             response_data['player_id'] = player.id
             game_id = int(kwargs['game_pk'])
             game = Game.objects.get(id=game_id)
-            game.add_player(player, piece)
+            game.add_player(player, piece, is_owner)
             response_status = status.HTTP_201_CREATED
         except Exception, e:
             response_data['error'] = str(e)

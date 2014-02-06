@@ -15,10 +15,9 @@ def index(request):
 def clue(request):
     try:
         if request.COOKIES.has_key( 'clue_token' ):
-            value = request.COOKIES[ 'clue_token' ]
-            player = Player.objects.get(token=value)
-            # TODO:  goto the game screen instead
-            return render_to_response('board.html')
+            token = request.COOKIES[ 'clue_token' ]
+            player = Player.objects.get(token=token)
+            return game_list(request, token)
         else:
             state = "Please log in below..."
             response = render_to_response('login.html',{'state':state})
@@ -33,6 +32,7 @@ def login_user(request):
     state = "Please log in below..."
     username = ''
     password = ''
+    player = None
     
     try:
         if request.POST:
@@ -48,26 +48,26 @@ def login_user(request):
                 uuid._uuid_generate_random = None
                 player.token = uuid.uuid4()
                 player.save()
-            # TODO:  goto the game screen instead    
-            page = 'board.html'
+            return game_list(request, player.token)
     except:
         state = "Your username and/or password were incorrect."
 
     response = render_to_response(page,{'state':state, 'username': username})
-    if player.token:
+    if player and player.token:
         response.set_cookie('clue_token', player.token)
         
     return response
 
 
 
-def game_list(request):
+def game_list(request, token=None):
     player = None
     try:
-        if request.COOKIES.has_key( 'clue_token' ):
-            value = request.COOKIES[ 'clue_token' ]
-            player = Player.objects.get(token=value)
-    except:
+        if not token and request.COOKIES.has_key( 'clue_token' ):
+            token = request.COOKIES[ 'clue_token' ]
+        if token:
+            player = Player.objects.get(token=token)
+    except Exception, e:
         pass
     
     games = []
@@ -90,6 +90,9 @@ def game_list(request):
         games.append(game)            
     
     response = render_to_response('game_list.html', {'player': player, 'games': games})
+    # This is here b/c the login screen is not sending it's own response.
+    if player and player.token:
+        response.set_cookie('clue_token', player.token)    
     return response
 
 

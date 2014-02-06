@@ -1,14 +1,58 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
   <title>Clue Game List</title>
-
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <link rel="stylesheet" href="/clue/static/js/jquery-ui-1.10.3/themes/base/jquery-ui.css" />
+  <script type="text/javascript" src="/clue/static/js/jquery-2.0.3.js"></script>
+
+  <script>
+  
+    function init_page() {
+        // var c = readCookie("clue_token");
+    }
+    
+    function readCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }  
+  
+    function logout() {
+        $( "#logged_in_content" ).hide();        
+        delete_cookie('clue_token');
+        $( "#logged_out_content" ).show();
+    }
+    
+    function delete_cookie(name) {
+        document.cookie = name + '=' + '' + '; expires=Wed, 1 Jan 2070 13:47:11 UTC; path=/';        
+        //document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    };    
+  </script>
+    
 </head>
 
-<body>
+<body onload="init_page();">
 
 
+  <div id="logged_in_content">
+      {% if player %}
+      Hi {{ player.name }}:  New Game | <a href="#" onclick="logout();">Logout</a>
+      {% else %}
+      <a href="/clue/login">Login</a>
+      {% endif %}      
+  </div>
+  <div id="logged_out_content" style="display:none;">
+      <a href="/clue/login">Login</a>
+  </div>
+  
+  <br/>
   <table>
       <tr>
           <th>Name</th><th>Owner</th><th>Start Time</th><th>Status</th><th>Players</th><th>&nbsp;</th>

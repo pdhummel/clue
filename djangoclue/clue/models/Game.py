@@ -12,18 +12,20 @@ class Game(models.Model):
     secret_character = models.CharField(max_length=2, choices=CHARACTER_CHOICES, blank=True)
     secret_weapon = models.CharField(max_length=2, choices=WEAPON_CHOICES, blank=True)
     secret_room = models.CharField(max_length=2, choices=ROOM_CHOICES, blank=True)
+    end_time = models.DateTimeField(blank=True,null=True)
+    last_die_roll = models.IntegerField(default=0)
+    # TODO:  possibly replace with reference to GameSuggestion
     suggested_character = models.CharField(max_length=2, choices=CHARACTER_CHOICES, blank=True)
     suggested_weapon = models.CharField(max_length=2, choices=WEAPON_CHOICES, blank=True)
     suggested_room = models.CharField(max_length=2, choices=ROOM_CHOICES, blank=True)    
-    end_time = models.DateTimeField(blank=True,null=True)
-    last_die_roll = models.IntegerField(default=0)
+    
 
     def __init__(self, *args, **kwargs):
         super(Game, self).__init__(*args, **kwargs)
         self.players = []   # GamePlayer
         self.pieces = {}    # GamePiece
       
-    def add_player(self, player, character):
+    def add_player(self, player, character, is_owner=False):
         self._open_game()        
         # TODO:  validate the game state
         # TODO:  validate that the piece is not already taken
@@ -31,7 +33,8 @@ class Game(models.Model):
         if character not in self.pieces.keys():
             self._place_pieces()
         piece = self.pieces[character]           
-        gp = GamePlayer.objects.create(game=self, player=player, piece=piece)
+        gp = GamePlayer.objects.create(game=self, player=player, piece=piece, 
+                                       is_game_organizer=is_owner)
         self.players.append(gp)
 
     def start_game(self):
