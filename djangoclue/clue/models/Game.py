@@ -2,9 +2,12 @@ import random
 from django.db import models
 from constants import CHARACTER_CHOICES, WEAPON_CHOICES, ROOM_CHOICES
 from GameBox import GameBox
+from Player import Player
+
 
 class Game(models.Model):
     name = models.CharField(max_length=50)
+    #owner = models.ForeignKey(Player)    
     game_state = models.CharField(max_length=50, default='forming', null=True)
     current_turn = models.IntegerField(default=0)           # turns start with 1
     pending_evidence_player_turn = models.IntegerField(default=0)

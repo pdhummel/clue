@@ -6,11 +6,82 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <link rel="stylesheet" href="/clue/static/js/jquery-ui-1.10.3/themes/base/jquery-ui.css" />
   <script type="text/javascript" src="/clue/static/js/jquery-2.0.3.js"></script>
+  <script type="text/javascript" src="/clue/static/js/jquery-ui-1.10.3/ui/jquery-ui.js"></script>  
 
   <script>
   
     function init_page() {
-        // var c = readCookie("clue_token");
+        
+        console.log("getting /clue/pieces/");
+        $.ajax({
+                url: '/clue/pieces/',
+                type: 'GET',
+                success: function(response, textStatus, jqXHR) {
+                    console.log("success /clue/pieces/: " + response);
+                    console.log(response);
+                    var options = $("#character_choice");
+                    options.append($("<option />").val(" ").text(" "));
+                    response.forEach(function(entry) {
+                        options.append($("<option />").val(entry[0]).text(entry[1]));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.log("error /clue/pieces/: " + error);
+                }
+        }).done(function() {
+                console.log("done /clue/pieces/");
+        }).fail(function(jqXHR, textStatus) {
+                console.log("fail /clue/pieces/: " + textStatus);
+        }).always(function() {
+        });
+    }
+    
+    function show_new_game_dialog() {
+        $( "#new_game_dialog" ).dialog({ minWidth: 500, 
+            buttons: [ { text: "Create", click: 
+            function() { 
+                new_game();
+                $(this).dialog("close"); 
+            } 
+        } ] });
+    }
+    
+    function new_game() {
+        console.log("new_game");
+        var piece = $("#character_choice").val();
+        var game_name = $("#game_name").val();
+        var player_name = $("#player_name").val();;
+        $.ajax({
+                url: '/clue/games/',
+                type: 'POST',
+                // {"game_name": "first", "player_name": "Paul", "piece": "PP" }
+                data: {"game_name": game_name, "piece": piece, "player_name": player_name},
+                success: function(response, textStatus, jqXHR) {
+                    console.log("success /clue/games/: " + response);
+                    console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    console.log("error /clue/games/: " + error);
+                }
+        }).done(function() {
+                console.log("done /clue/games/");
+        }).fail(function(jqXHR, textStatus) {
+                console.log("fail /clue/games/: " + textStatus);
+        }).always(function() {
+        });        
+    }
+    
+    
+    
+    function logout() {
+        $( "#logged_in_content" ).hide();        
+        delete_cookie('clue_token');
+        $( "#logged_out_content" ).show();
+    }
+
+    function delete_cookie(name) {
+        document.cookie = name + '=' + '' + '; expires=Wed, 1 Jan 2070 13:47:11 UTC; path=/';        
+        //document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
     
     function readCookie(name) {
@@ -23,17 +94,7 @@
         }
         return null;
     }  
-  
-    function logout() {
-        $( "#logged_in_content" ).hide();        
-        delete_cookie('clue_token');
-        $( "#logged_out_content" ).show();
-    }
     
-    function delete_cookie(name) {
-        document.cookie = name + '=' + '' + '; expires=Wed, 1 Jan 2070 13:47:11 UTC; path=/';        
-        //document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    };    
   </script>
     
 </head>
@@ -43,7 +104,7 @@
 
   <div id="logged_in_content">
       {% if player %}
-      Hi {{ player.name }}:  New Game | <a href="#" onclick="logout();">Logout</a>
+      Hi {{ player.name }}:  <a href="#" onclick="show_new_game_dialog();">New Game</a> | <a href="#" onclick="logout();">Logout</a>
       {% else %}
       <a href="/clue/login">Login</a>
       {% endif %}      
@@ -64,6 +125,20 @@
       </tr>
       {% endfor %}
   </table>
+
+
+
+  <div id="new_game_dialog" title="New Game" style="display:none;">
+    <table>
+      <tr>
+        <td align="right">Game Name:</td><td><input id="game_name" type="text" /></td>
+      </tr>
+      <tr>
+        <td align="right">Your Piece:</td><td><select id="character_choice"></select></td>
+      </tr>
+    </table>
+    <input id="player_name" type="hidden" value="{{ player.name }}" />
+  </div>
 
 </body>
 

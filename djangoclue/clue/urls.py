@@ -4,7 +4,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from views.player_api_view import PlayerList, PlayerDetail
 from views.game_api_view import GameList, GameDetail, GameSecretDetail
-from views.game_piece_api_view import GamePieceList, GamePieceDetail
+from views.game_piece_api_view import GamePieceList, GamePieceDetail, piece_list
 from views.game_player_api_view import GamePlayerList, GamePlayerDetail
 
 # Uncomment the next two lines to enable the admin:
@@ -44,6 +44,7 @@ urlpatterns = patterns('',
     
     url(r'^clue/games/(?P<game_pk>.+)/pieces/$', GamePieceList.as_view(), name='game_pieces_list'),    
     url(r'^clue/games/(?P<game_pk>[0-9]+)/pieces/(?P<pk>[0-9]+)/$', GamePieceDetail.as_view()),
+    url(r'^clue/pieces/$', piece_list),
     
     url(r'^clue/games/(?P<game_pk>.+)/players/$', GamePlayerList.as_view(), name='game_players_list'),    
     url(r'^clue/games/(?P<game_pk>[0-9]+)/players/(?P<pk>[0-9]+)/$', GamePlayerDetail.as_view()),    
