@@ -19,10 +19,13 @@
                 success: function(response, textStatus, jqXHR) {
                     console.log("success /clue/pieces/: " + response);
                     console.log(response);
-                    var options = $("#character_choice");
-                    options.append($("<option />").val(" ").text(" "));
+                    var character_choice = $("#character_choice");
+                    character_choice.append($("<option />").val(" ").text(" "));
+                    var join_character_choice = $("#join_character_choice");
+                    join_character_choice.append($("<option />").val(" ").text(" "));
                     response.forEach(function(entry) {
-                        options.append($("<option />").val(entry[0]).text(entry[1]));
+                        character_choice.append($("<option />").val(entry[0]).text(entry[1]));
+                        join_character_choice.append($("<option />").val(entry[0]).text(entry[1]));
                     });
                 },
                 error: function(xhr, status, error) {
@@ -39,10 +42,10 @@
     function show_new_game_dialog() {
         $( "#new_game_dialog" ).dialog({ minWidth: 500, 
             buttons: [ { text: "Create", click: 
-            function() { 
+            function() {
                 new_game();
-                $(this).dialog("close"); 
-            } 
+                $(this).dialog("close");
+            }
         } ] });
     }
     
@@ -72,10 +75,18 @@
         });        
     }
     
-    function join_game(game_id) {
-        window.open("/clue/enter_game?game_id=" + game_id);
+    function show_join_game_dialog(game_id) {
+        
+        $( "#join_game_dialog" ).dialog({ minWidth: 500, 
+            buttons: [ { text: "Join", click: 
+            function() {
+                var piece = $("#join_character_choice").val();
+                window.open("/clue/join_game?game_id=" + game_id + "&piece=" + 
+                            piece, '_self');
+            } 
+        } ] });
     }
-    
+
     function logout() {
         $( "#logged_in_content" ).hide();        
         delete_cookie('clue_token');
@@ -129,7 +140,7 @@
             {% if action == "enter" %}
             <a href ="/clue/enter_game?game_id={{game.id}}">{{action}}</a>
             {% elif action == "join" %}
-            <a href ="#" onclick="join_game({{game.id}});">{{action}}</a>            
+            <a href ="#" onclick="show_join_game_dialog({{game.id}});">{{action}}</a>
             {% else %}
             {{action}}
             {% endif %}
@@ -151,6 +162,16 @@
       </tr>
     </table>
     <input id="player_name" type="hidden" value="{{ player.name }}" />
+  </div>
+
+
+  <div id="join_game_dialog" title="Join Game" style="display:none;">
+    <table>
+      <tr>
+        <td align="right">Your Piece:</td><td><select id="join_character_choice"></select></td>
+      </tr>
+    </table>
+    <input id="join_player_name" type="hidden" value="{{ player.name }}" />
   </div>
 
 </body>
