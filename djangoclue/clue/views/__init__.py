@@ -14,8 +14,8 @@ def index(request):
 
 def clue(request):
     try:
-        if request.COOKIES.has_key( 'clue_token' ):
-            token = request.COOKIES[ 'clue_token' ]
+        if request.COOKIES.has_key('clue_token'):
+            token = request.COOKIES['clue_token']
             player = Player.objects.get(token=token)
             return game_list(request, token)
         else:
@@ -25,6 +25,53 @@ def clue(request):
         state = "Please log in below..."
         response = render_to_response('login.html',{'state':state})   
     return response
+
+
+def join_game(request):
+    data = request.GET
+    game_id = int(data['game_id'])
+    piece = data['piece']
+    game = None
+    game_player = None
+    try:
+        game = Game.objects.get(id=game_id)
+    except:
+        # TODO:  this is an error
+        pass
+    
+    if request.COOKIES.has_key('clue_token'):
+        token = request.COOKIES['clue_token']
+        try:
+            player = Player.objects.get(token=token)
+            game.add_player(player, piece)
+        except:
+            # TODO:  this is an error
+            pass
+    else:
+        # TODO:  this is an error
+        pass
+    response = game_board(request, game, game_player)
+    return response    
+    
+    
+def enter_game(request):
+    response = game_board(request)
+    return response
+
+def game_board(request, game=None, game_player=None):
+    if game == None:
+        data = request.GET
+        game_id = int(data['game_id'])
+        
+        try:
+            game = Game.objects.get(id=game_id)
+        except:
+            # TODO:  this is an error
+            pass
+    
+    response = render_to_response('board.html', {'game': game, 'game_player': game_player})
+    return response
+
 
 
 def login_user(request):
@@ -73,12 +120,15 @@ def game_list(request, token=None):
     games = []
     for game in Game.objects.filter():
         game.owner = ""        
-        game.players = []
+        game.players = ""
         game.actions = ["enter"]
         for game_player in GamePlayer.objects.filter(game=game):
             if game_player.is_game_organizer:
                 game.owner = game_player.player.name
-            game.players.append(game_player.player.name)
+            if len(game.players) > 0:
+                game.players = game.players + ", " + game_player.player.name
+            else:
+                game.players = game_player.player.name
             
             # abort | start | join | enter
             if game.game_state == "forming":

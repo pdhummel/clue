@@ -59,6 +59,7 @@
                 success: function(response, textStatus, jqXHR) {
                     console.log("success /clue/games/: " + response);
                     console.log(response);
+                    location.reload();
                 },
                 error: function(xhr, status, error) {
                     console.log("error /clue/games/: " + error);
@@ -71,7 +72,9 @@
         });        
     }
     
-    
+    function join_game(game_id) {
+        window.open("/clue/enter_game?game_id=" + game_id);
+    }
     
     function logout() {
         $( "#logged_in_content" ).hide();        
@@ -81,7 +84,6 @@
 
     function delete_cookie(name) {
         document.cookie = name + '=' + '' + '; expires=Wed, 1 Jan 2070 13:47:11 UTC; path=/';        
-        //document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     }
     
     function readCookie(name) {
@@ -121,7 +123,18 @@
       
       {% for game in games %}
       <tr>
-          <td>{{game.name}}</td><td>{{game.owner}}</td><td>{{game.start_time}}</td><td>{{game.game_state}}</td><td>{{game.players}}</td><td>{{game.actions}}</td>
+          <td>{{game.name}}</td><td>{{game.owner}}</td><td>{{game.start_time}}</td><td>{{game.game_state}}</td><td>{{game.players}}</td>
+          <td>
+          {% for action in game.actions %}
+            {% if action == "enter" %}
+            <a href ="/clue/enter_game?game_id={{game.id}}">{{action}}</a>
+            {% elif action == "join" %}
+            <a href ="#" onclick="join_game({{game.id}});">{{action}}</a>            
+            {% else %}
+            {{action}}
+            {% endif %}
+          {% endfor %}
+          </td>
       </tr>
       {% endfor %}
   </table>

@@ -39,6 +39,7 @@ class Game(models.Model):
         gp = GamePlayer.objects.create(game=self, player=player, piece=piece, 
                                        is_game_organizer=is_owner)
         self.players.append(gp)
+        return gp
 
     def start_game(self):
         self._open_game()        
