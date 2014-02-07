@@ -122,6 +122,7 @@ def game_list(request, token=None):
         game.owner = ""        
         game.players = ""
         game.actions = ["enter"]
+        game_player_names = []
         for game_player in GamePlayer.objects.filter(game=game):
             if game_player.is_game_organizer:
                 game.owner = game_player.player.name
@@ -129,13 +130,18 @@ def game_list(request, token=None):
                 game.players = game.players + ", " + game_player.player.name
             else:
                 game.players = game_player.player.name
-            
+            game_player_names.append(game_player.player.name)
+        
+        if player != None:
             # abort | start | join | enter
             if game.game_state == "forming":
-                if game_player.player == player:
-                    game.actions.append("start")
-                    game.actions.append("abort")
-                elif player != None:
+                try:
+                    game_player = GamePlayer.objects.get(game=game, player=player)
+                    if game_player.is_game_organizer == True:
+                        if len(game_player_names) >= 3:
+                            game.actions.append("start")
+                        game.actions.append("abort")
+                except:
                     game.actions.append("join")
         games.append(game)            
     
