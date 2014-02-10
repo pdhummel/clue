@@ -109,14 +109,43 @@ function place_piece(character, row, col) {
 }
 
 function init_page() {
+    var game_id = $("#game_id").val();
+    process_game_state(game_id);
 	//$("#menu").menubar();
+	/*
 	place_piece('MS', 0, 16);
 	place_piece('PP', 5, 0);
     place_piece('CM', 7, 23);
     place_piece('MP', 18, 0);
     place_piece('MG', 24, 9);
     place_piece('MW', 24, 14);
+    */
 }
+
+
+function process_game_state(game_id) {
+    console.log("getting /clue/games/" + game_id + "/");
+    $.ajax({
+        url: '/clue/games/' + game_id + '/',
+        type: 'GET',
+        success: function(response, textStatus, jqXHR) {
+            console.log("success /clue/games/" + game_id + "/: " + response);
+            console.log(response);
+            response.game_pieces.forEach(function(game_piece) {
+                place_piece(game_piece.character, game_piece.space.y, game_piece.space.x);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.log("error /clue/games/" + game_id + "/: " + error);
+        }
+    }).done(function() {
+        console.log("done /clue/games/" + game_id + "/");
+    }).fail(function(jqXHR, textStatus) {
+        console.log("fail /clue/games/" + game_id + "/: " + textStatus);
+    }).always(function() {
+    });
+}
+
 </script>
 
 
@@ -125,6 +154,8 @@ function init_page() {
 
 
 <body onload="init_page();">
+
+<input id="game_id" type="hidden" value="{{game.id}}">
 
 <nav>
 <ul id="menu">
@@ -156,7 +187,7 @@ top y border=50, bottom y border=50
 -->
 
 
-<div id="pointer_div" onclick="point_it(event)" style = "background-image:url('/clue/static/images/clue_board.jpg');width:1162px;height:1159px;">
+<div id="pointer_div" onclick="point_it(event)" style = "background-image:url('/clue/static/images/clue_board.jpga');width:1162px;height:1159px;">
 	<img src="point.gif" id="cross" style="position:relative;visibility:hidden;z-index:25;" />
 	
 	<svg id="test" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top: 0px;left: 0px;width:1162px;height:1159px;">

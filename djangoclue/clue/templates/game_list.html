@@ -74,9 +74,31 @@
         }).always(function() {
         });        
     }
+
+    function start_game(game_id) {
+        console.log("start_game");
+        $.ajax({
+                url: '/clue/games/' + game_id + '/',
+                type: 'PUT',
+                data: {"pk": game_id},
+                success: function(response, textStatus, jqXHR) {
+                    console.log("success /clue/games/" + game_id + "/: " + response);
+                    console.log(response);
+                    window.open('/clue/enter_game?game_id=' + game_id, '_self');
+                },
+                error: function(xhr, status, error) {
+                    console.log("error /clue/games/" + game_id + "/: " + error);
+                }
+        }).done(function() {
+                console.log("done /clue/games/"  + game_id + "/");
+        }).fail(function(jqXHR, textStatus) {
+                console.log("fail /clue/games/" + game_id + "/: " + textStatus);
+        }).always(function() {
+        });
+    }
+
     
     function show_join_game_dialog(game_id) {
-        
         $( "#join_game_dialog" ).dialog({ minWidth: 500, 
             buttons: [ { text: "Join", click: 
             function() {
@@ -141,6 +163,8 @@
             <a href ="/clue/enter_game?game_id={{game.id}}">{{action}}</a>
             {% elif action == "join" %}
             <a href ="#" onclick="show_join_game_dialog({{game.id}});">{{action}}</a>
+            {% elif action == "start" %}
+            <a href ="#" onclick="start_game({{game.id}});">{{action}}</a>
             {% else %}
             {{action}}
             {% endif %}

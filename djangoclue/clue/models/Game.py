@@ -119,17 +119,17 @@ class Game(models.Model):
     def _place_pieces(self):
         from GamePiece import GamePiece
         self._open_game_box()
-        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[0][0], space=self.game_box.board[0][1])
+        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[0][0], space=self.game_box.board[5][0])
         self.pieces[gp.character] = gp
-        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[1][0], space=self.game_box.board[0][2])
+        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[1][0], space=self.game_box.board[18][0])
         self.pieces[gp.character] = gp
-        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[2][0], space=self.game_box.board[0][3])
+        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[2][0], space=self.game_box.board[0][16])
         self.pieces[gp.character] = gp
-        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[3][0], space=self.game_box.board[0][4])
+        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[3][0], space=self.game_box.board[7][23])
         self.pieces[gp.character] = gp
-        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[4][0], space=self.game_box.board[0][5])
+        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[4][0], space=self.game_box.board[24][9])
         self.pieces[gp.character] = gp
-        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[5][0], space=self.game_box.board[0][6])
+        gp = GamePiece.objects.create(game=self, character=CHARACTER_CHOICES[5][0], space=self.game_box.board[24][14])
         self.pieces[gp.character] = gp
 
 

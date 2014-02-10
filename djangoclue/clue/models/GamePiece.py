@@ -53,7 +53,7 @@ class GamePiece(models.Model):
 
     def __str__(self):
         s = 'character=' + self.character +  \
-            ', space=' + str(self.space) + ', room=' + self.room
+            ', space=' + str(self.space) + ', room=' + str(self.room)
         return s
 
 
